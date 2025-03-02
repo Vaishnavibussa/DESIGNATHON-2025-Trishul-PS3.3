@@ -185,7 +185,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:rgb(255, 255, 255);
+  background:rgb(25, 24, 24);
   padding: 1.5rem;
   text-align: center;
 }
@@ -250,7 +250,7 @@ const App = () => {
   return (
     <div>
       <header className="header">
-        {/* <img src={logo} alt="MindfulScroll Logo" className="logo" /> */}
+        
         <h1>MindfulScroll</h1>
       </header>
       <div className="container">
