@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MindfulScroll - Digital Wellness</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Classic Black and White Theme */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      line-height: 1.6;
+    }
+    header {
+      background: #fff;
+      color: #000;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    header p {
+      margin: 0.5rem 0 0;
+      font-size: 1.2rem;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      
+    }
+    .card {
+        background: #222;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+      margin-bottom: 1rem;
+    }
+    h2 {
+      color: #ddd;
+    }
+    form label {
+      display: block;
+      margin: 0.5rem 0;
+      font-weight: bold;
+    }
+    form input {
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background: #222;
+      color: #fff;
+    }
+    form button {
+      background: #444;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background: #666;
+    }
+    #alertMessage {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #ff4444;
+    }
+    #dashboard {
+      margin-top: 1rem;
+      font-size: 1rem;
+      background: #222;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #fff;
+      color: #000;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MindfulScroll</h1>
+    <p>Break the Doom Scrolling Cycle</p>
+  </header>
+
+  <div class="container">
+    <!-- Set Digital Goals Section -->
+    <section>
+      <div class="card">
+        <h2>Set Your Digital Goals</h2>
+        <form id="goalForm">
+          <label for="dailyLimit">Daily Screen Time Limit (minutes):</label>
+          <input type="number" id="dailyLimit" name="dailyLimit" placeholder="e.g., 120" required>
+          <button type="submit">Save Goal</button>
+        </form>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>Set Your Motivation</h2>
+        <form id="goalForm">
+          <input type="text" id="mot" name="dailyLimit" placeholder="e.g.Getting job" required>
+          <button type="submit">Save Goal</button>
+        </form>
+      </div>
+    </section>
+    
+    
+    
+    <!-- Digital Habits Monitoring Form -->
+    <section>
+      <div class="card">
+        <h2>Monitor Your Digital Habits</h2>
+        <form id="screenTimeForm">
+          <label for="screenTime">Screen Time (in minutes):</label>
+          <input type="number" id="screenTime" name="screenTime" placeholder="e.g., 75" required>
+          
+          <label for="negativeContent">Negative Content Count:</label>
+          <input type="number" id="negativeContent" name="negativeContent" placeholder="e.g., 6" required>
+          
+          <button type="submit">Submit Data</button>
+        </form>
+        <div id="alertMessage"></div>
+      </div>
+    </section>
+
+    <!-- Analytics Dashboard -->
+    <section>
+      <div class="card">
+        <h2>Your Digital Wellness Dashboard</h2>
+        <div id="dashboard">
+          <p>No data yet. Submit your digital habits to see your progress.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 MindfulScroll. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("goalForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const dailyLimit = parseInt(document.getElementById("dailyLimit").value, 10);
+      localStorage.setItem("dailyLimit", dailyLimit);
+      alert("Your daily screen time goal of " + dailyLimit + " minutes has been saved!");
+    });
+
+    document.getElementById("screenTimeForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const screenTime = parseInt(document.getElementById("screenTime").value, 10);
+      const negativeContent = parseInt(document.getElementById("negativeContent").value, 10);
+      const dailyLimit = parseInt(localStorage.getItem("dailyLimit")) || 0;
+
+      let alertMessage = "";
+      let points = 0;
+
+      if (screenTime > 60 || negativeContent > 5) {
+        alertMessage = "Alert: You've been scrolling too long. Please take a break!";
+      } else {
+        alertMessage = "Good job! You're within healthy limits.";
+        points = 10;
+      }
+
+      if (dailyLimit && screenTime > dailyLimit) {
+        alertMessage += " Also, you have exceeded your daily limit of " + dailyLimit + " minutes.";
+      }
+
+      document.getElementById("alertMessage").innerText = alertMessage;
+      
+      let history = JSON.parse(localStorage.getItem("usageHistory")) || [];
+      history.push({ screenTime, negativeContent, points, timestamp: new Date().toLocaleString() });
+      localStorage.setItem("usageHistory", JSON.stringify(history));
+      updateDashboard();
+    });
+
+    function updateDashboard() {
+      const history = JSON.parse(localStorage.getItem("usageHistory")) || [];
+      let dashboardHTML = history.length === 0 ? "<p>No data yet. Submit your digital habits to see your progress.</p>" : "<ul>";
+
+      history.forEach(entry => {
+        dashboardHTML += `<li>[${entry.timestamp}] Screen Time: ${entry.screenTime} mins, Negative Count: ${entry.negativeContent}, Points: ${entry.points}</li>`;
+      });
+
+      dashboardHTML += history.length ? "</ul>" : "";
+      document.getElementById("dashboard").innerHTML = dashboardHTML;
+    }
+
+    updateDashboard();
+  </script>
+</body>
+</html>

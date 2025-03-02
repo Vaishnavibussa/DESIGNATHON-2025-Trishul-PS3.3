@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Break Tracker Game - MindfulScroll</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #121212;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #fff, #fff);
+            color: #000;
+            padding: 1.5rem;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .game-container {
+            width: 90%;
+            max-width: 400px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: #ff6b81;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #ff4757;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: #ffcc00;
+            color: black;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+            box-shadow: 0 3px 5px rgba(255, 255, 0, 0.3);
+            transition: 0.3s;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: #444;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress {
+    height: 10px;
+    background: #4caf50; /* Example: Green progress bar */
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+}
+
+
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            background: #ff9a9e;
+            color: #000;
+            margin-top: 20px;
+            font-weight: bold;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        🎮 Break Time Challenge - MindfulScroll
+    </header>
+
+    <div class="game-container">
+        <h2>🕒 Total Time Spent: <span id="timeSpent">0</span> min</h2>
+        <h2>🔥 Daily Streak: <span id="streak">0</span> days</h2>
+        <h2>💎 XP: <span id="xp">0</span></h2>
+
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+
+        <h2>🏅 Badges Earned:</h2>
+        <div class="badge-container" id="badges">
+            <span class="badge">None</span>
+        </div>
+
+        <button class="btn" onclick="takeBreak()">Take a Break 🚀</button>
+    </div>
+
+    <footer class="footer">
+        &copy; 2024 MindfulScroll - Stay Mindful, Stay Focused!
+    </footer>
+
+    <script>
+        let timeSpent = parseInt(localStorage.getItem("timeSpent")) || 0;
+        let streak = parseInt(localStorage.getItem("streak")) || 0;
+        let xp = parseInt(localStorage.getItem("xp")) || 0;
+        let lastActiveDate = localStorage.getItem("lastActiveDate") || null;
+        let badges = JSON.parse(localStorage.getItem("badges")) || [];
+
+        function updateUI() {
+            document.getElementById("timeSpent").innerText = timeSpent;
+            document.getElementById("streak").innerText = streak;
+            document.getElementById("xp").innerText = xp;
+
+            // Update progress bar
+            let progress = document.getElementById("progress");
+            let progressPercentage = Math.min((xp / 100) * 100, 100);
+            progress.style.width = `${progressPercentage}%`;
+
+
+            // Update badges
+            let badgeContainer = document.getElementById("badges");
+            badgeContainer.innerHTML = "";
+            
+            if (badges.length === 0) {
+                badgeContainer.innerHTML = '<span class="badge">None</span>';
+            } else {
+                badges.forEach(badge => {
+                    let badgeElement = document.createElement("span");
+                    badgeElement.classList.add("badge");
+                    badgeElement.innerText = badge;
+                    badgeContainer.appendChild(badgeElement);
+                });
+            }
+
+            // Save data to localStorage
+            localStorage.setItem("timeSpent", timeSpent);
+            localStorage.setItem("streak", streak);
+            localStorage.setItem("xp", xp);
+            localStorage.setItem("badges", JSON.stringify(badges));
+            localStorage.setItem("lastActiveDate", new Date().toDateString());
+        }
+
+        // function checkStreakReset() {
+        //     let today = new Date().toDateString();
+        //     if (lastActiveDate !== today) {
+        //         streak++;
+        //         lastActiveDate = today;
+        //         localStorage.setItem("lastActiveDate", today);
+        //     }
+        // }
+
+        function checkStreakReset() {
+    let today = new Date().toDateString();
+    if (lastActiveDate) {
+        let lastDate = new Date(lastActiveDate);
+        let todayDate = new Date(today);
+        let difference = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+        if (difference === 1) {
+            streak++;
+        } else if (difference > 1) {
+            streak = 0; // Reset if a day is missed
+        }
+    }
+    lastActiveDate = today;
+    localStorage.setItem("lastActiveDate", today);
+}
+
+
+        setInterval(() => {
+            timeSpent++;
+            updateUI();
+
+            if (timeSpent % 20 === 0) {
+                alert("⏳ Time for a break! Step away for 5 minutes!");
+            }
+        }, 60000); // Increase time spent every 1 minute
+
+        function takeBreak() {
+            xp += 10;
+
+            // Unlock badges based on XP
+            if (xp >= 30 && !badges.includes("Break Master 🏆")) {
+                badges.push("Break Master 🏆");
+            }
+            if (xp >= 50 && !badges.includes("Zen Guru 🧘‍♂")) {
+                badges.push("Zen Guru 🧘‍♂");
+            }
+            if (xp >= 100 && !badges.includes("Mindfulness Champion 🏅")) {
+                badges.push("Mindfulness Champion 🏅");
+            }
+
+            alert("✅ Break taken! You earned 10 XP!");
+            updateUI();
+        }
+
+        checkStreakReset();
+        updateUI();
+    </script>
+
+</body>
+</html>
