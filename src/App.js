@@ -169,7 +169,9 @@ import React, { useState } from "react";
 import SleepPattern from "./components/SleepPattern";
 import SentimentAnalysis from "./components/SentimentAnalysis";
 import StreamlitEmbed from "./components/StreamlitEmbed";
-// import logo from "./assets/logo.png"; // Add your logo here
+// import logo from "./logo.svg"; // Add your logo here
+// import trishulLogo from "./trishulLogo.png";
+import trishulLogo from "./logo.png"; // Ensure the correct filename & extension
 
 const styles = `
 body {
@@ -185,15 +187,22 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:rgb(25, 24, 24);
-  padding: 1.5rem;
+  color: rgb(0,0,0);
+  background:rgb(255, 255, 255);
+  padding: 0.8rem;
+  // font-size: 15px;
   text-align: center;
 }
 
-// .logo {
-//   width: 50px;
-//   margin-right: 15px;
-// }
+.trishulLogo {
+  width: 60px;  /* Adjust size */
+  height: auto;
+  height: 95px;
+  width: 95px;
+
+  margin-right: 15px;
+}
+
 
 .container {
   padding: 2rem;
@@ -250,9 +259,12 @@ const App = () => {
   return (
     <div>
       <header className="header">
-        
-        <h1>MindfulScroll</h1>
-      </header>
+  <img src={trishulLogo} alt="Trishul Logo" className="trishulLogo" />
+  <div className="header-text">
+    <h1>MindfulScroll</h1>
+    <h3><b>Break the Doom Scrolling Cycle</b></h3>
+  </div>
+</header>
       <div className="container">
         <section className="section">
           <h2>About Doom Scrolling</h2>
@@ -291,7 +303,7 @@ const App = () => {
 
         <section className="section">
           <p>Receive real-time AI alerts to minimize excessive doom scrolling.</p>
-          <button className="btn" onClick={() => setShowStreamlit(true)}>Alerts</button>
+          <button className="btn" onClick={() => setShowStreamlit(true)}>Cyberbullying Prediction</button>
           {showStreamlit && (
             <iframe title="Streamlit App" src="http://localhost:8501" width="100%" height="600px" style={{ border: "none", marginTop: "20px" }} />
           )}
@@ -299,7 +311,7 @@ const App = () => {
 
         <section className="section">
           <p>Track your sleep patterns and their correlation with digital habits.</p>
-          <button className="btn" onClick={() => setShowSleepPattern(!showPattern)}>Sleep Pattern Analysis</button>
+          <button className="btn" onClick={() => setShowSleepPattern(!showPattern)}>Analytics</button>
           {showPattern && <SleepPattern />}
         </section>
 
